@@ -7,16 +7,16 @@ import (
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/henrygoeszanin/api_golang_estudos/application/dtos"
-	"github.com/henrygoeszanin/api_golang_estudos/application/interfaces/services"
+	"github.com/henrygoeszanin/api_golang_estudos/application/services"
 )
 
 // LoanHandler manipula as requisições relacionadas a empréstimos
 type LoanHandler struct {
-	loanService services.LoanService
+	loanService *services.LoanService
 }
 
 // NewLoanHandler cria uma nova instância de LoanHandler
-func NewLoanHandler(loanService services.LoanService) *LoanHandler {
+func NewLoanHandler(loanService *services.LoanService) *LoanHandler {
 	return &LoanHandler{
 		loanService: loanService,
 	}

@@ -5,24 +5,23 @@ import (
 
 	"github.com/henrygoeszanin/api_golang_estudos/application/dtos"
 	"github.com/henrygoeszanin/api_golang_estudos/application/interfaces/repositories"
-	"github.com/henrygoeszanin/api_golang_estudos/application/interfaces/services"
 	"github.com/henrygoeszanin/api_golang_estudos/domain/entities"
 )
 
-// bookService implementa a interface BookService
-type bookService struct {
+// BookService implementa a interface BookService
+type BookService struct {
 	bookRepository repositories.BookRepository
 }
 
 // NewBookService cria uma nova instância do serviço de livros
-func NewBookService(bookRepository repositories.BookRepository) services.BookService {
-	return &bookService{
+func NewBookService(bookRepository repositories.BookRepository) *BookService {
+	return &BookService{
 		bookRepository: bookRepository,
 	}
 }
 
 // Create cria um novo livro
-func (bookservice *bookService) Create(bookDTO dtos.BookCreateDTO) (*dtos.BookResponseDTO, error) {
+func (bookservice *BookService) Create(bookDTO dtos.BookCreateDTO) (*dtos.BookResponseDTO, error) {
 	book := entities.Book{
 		Title:       bookDTO.Title,
 		Author:      bookDTO.Author,
@@ -40,7 +39,7 @@ func (bookservice *bookService) Create(bookDTO dtos.BookCreateDTO) (*dtos.BookRe
 }
 
 // GetByID busca um livro pelo ID
-func (bookservice *bookService) GetByID(id uint) (*dtos.BookResponseDTO, error) {
+func (bookservice *BookService) GetByID(id uint) (*dtos.BookResponseDTO, error) {
 	book, err := bookservice.bookRepository.FindByID(id)
 	if err != nil {
 		return nil, err
@@ -54,7 +53,7 @@ func (bookservice *bookService) GetByID(id uint) (*dtos.BookResponseDTO, error) 
 }
 
 // List retorna todos os livros
-func (bookservice *bookService) List() ([]dtos.BookResponseDTO, error) {
+func (bookservice *BookService) List() ([]dtos.BookResponseDTO, error) {
 	books, err := bookservice.bookRepository.List()
 	if err != nil {
 		return nil, err
@@ -69,7 +68,7 @@ func (bookservice *bookService) List() ([]dtos.BookResponseDTO, error) {
 }
 
 // Update atualiza os dados de um livro
-func (bookservice *bookService) Update(id uint, bookDTO dtos.BookUpdateDTO) (*dtos.BookResponseDTO, error) {
+func (bookservice *BookService) Update(id uint, bookDTO dtos.BookUpdateDTO) (*dtos.BookResponseDTO, error) {
 	book, err := bookservice.bookRepository.FindByID(id)
 	if err != nil {
 		return nil, err
@@ -107,6 +106,6 @@ func (bookservice *bookService) Update(id uint, bookDTO dtos.BookUpdateDTO) (*dt
 }
 
 // Delete remove um livro
-func (bookservice *bookService) Delete(id uint) error {
+func (bookservice *BookService) Delete(id uint) error {
 	return bookservice.bookRepository.Delete(id)
 }

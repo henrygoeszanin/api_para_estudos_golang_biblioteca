@@ -5,27 +5,26 @@ import (
 
 	"github.com/henrygoeszanin/api_golang_estudos/application/dtos"
 	"github.com/henrygoeszanin/api_golang_estudos/application/interfaces/repositories"
-	"github.com/henrygoeszanin/api_golang_estudos/application/interfaces/services"
 	"github.com/henrygoeszanin/api_golang_estudos/domain/entities"
 	"golang.org/x/crypto/bcrypt"
 )
 
-// userService implementa a interface UserService
-type userService struct {
+// UserService implementa a interface UserService
+type UserService struct {
 	userRepository repositories.UserRepository
 }
 
 // NewUserService cria uma nova instância do serviço de usuários
-func NewUserService(userRepository repositories.UserRepository) services.UserService {
-	return &userService{
+func NewUserService(userRepository repositories.UserRepository) *UserService {
+	return &UserService{
 		userRepository: userRepository,
 	}
 }
 
 // Create cria um novo usuário
-func (userService *userService) Create(userDTO dtos.UserCreateDTO) (*dtos.UserResponseDTO, error) {
+func (UserService *UserService) Create(userDTO dtos.UserCreateDTO) (*dtos.UserResponseDTO, error) {
 	// Verificar se o email já está em uso
-	existingUser, err := userService.userRepository.FindByEmail(userDTO.Email)
+	existingUser, err := UserService.userRepository.FindByEmail(userDTO.Email)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +46,7 @@ func (userService *userService) Create(userDTO dtos.UserCreateDTO) (*dtos.UserRe
 	}
 
 	// Salvar no banco de dados
-	if err := userService.userRepository.Create(&user); err != nil {
+	if err := UserService.userRepository.Create(&user); err != nil {
 		return nil, err
 	}
 
@@ -58,8 +57,8 @@ func (userService *userService) Create(userDTO dtos.UserCreateDTO) (*dtos.UserRe
 }
 
 // GetByID busca um usuário pelo ID
-func (userService *userService) GetByID(id uint) (*dtos.UserResponseDTO, error) {
-	user, err := userService.userRepository.FindByID(id)
+func (UserService *UserService) GetByID(id uint) (*dtos.UserResponseDTO, error) {
+	user, err := UserService.userRepository.FindByID(id)
 	if err != nil {
 		return nil, err
 	}
@@ -72,13 +71,13 @@ func (userService *userService) GetByID(id uint) (*dtos.UserResponseDTO, error) 
 }
 
 // GetByEmail busca um usuário pelo email
-func (userService *userService) GetByEmail(email string) (*entities.User, error) {
-	return userService.userRepository.FindByEmail(email)
+func (UserService *UserService) GetByEmail(email string) (*entities.User, error) {
+	return UserService.userRepository.FindByEmail(email)
 }
 
 // Update atualiza os dados de um usuário
-func (userService *userService) Update(id uint, userDTO dtos.UserUpdateDTO) (*dtos.UserResponseDTO, error) {
-	user, err := userService.userRepository.FindByID(id)
+func (UserService *UserService) Update(id uint, userDTO dtos.UserUpdateDTO) (*dtos.UserResponseDTO, error) {
+	user, err := UserService.userRepository.FindByID(id)
 	if err != nil {
 		return nil, err
 	}
@@ -99,7 +98,7 @@ func (userService *userService) Update(id uint, userDTO dtos.UserUpdateDTO) (*dt
 	}
 
 	// Salvar alterações
-	if err := userService.userRepository.Update(user); err != nil {
+	if err := UserService.userRepository.Update(user); err != nil {
 		return nil, err
 	}
 
@@ -108,13 +107,13 @@ func (userService *userService) Update(id uint, userDTO dtos.UserUpdateDTO) (*dt
 }
 
 // Delete remove um usuário
-func (userService *userService) Delete(id uint) error {
-	return userService.userRepository.Delete(id)
+func (UserService *UserService) Delete(id uint) error {
+	return UserService.userRepository.Delete(id)
 }
 
 // List retorna todos os usuários
-func (userService *userService) List() ([]dtos.UserResponseDTO, error) {
-	users, err := userService.userRepository.List()
+func (UserService *UserService) List() ([]dtos.UserResponseDTO, error) {
+	users, err := UserService.userRepository.List()
 	if err != nil {
 		return nil, err
 	}
@@ -128,12 +127,12 @@ func (userService *userService) List() ([]dtos.UserResponseDTO, error) {
 }
 
 // PromoteToAdmin promove um usuário para administrador
-func (userService *userService) PromoteToAdmin(id uint) (*dtos.UserResponseDTO, error) {
-	if err := userService.userRepository.PromoteToAdmin(id); err != nil {
+func (UserService *UserService) PromoteToAdmin(id uint) (*dtos.UserResponseDTO, error) {
+	if err := UserService.userRepository.PromoteToAdmin(id); err != nil {
 		return nil, err
 	}
 
-	user, err := userService.userRepository.FindByID(id)
+	user, err := UserService.userRepository.FindByID(id)
 	if err != nil {
 		return nil, err
 	}
@@ -146,8 +145,8 @@ func (userService *userService) PromoteToAdmin(id uint) (*dtos.UserResponseDTO, 
 }
 
 // AuthenticateUser autentica um usuário pelo email e senha
-func (userService *userService) AuthenticateUser(email, password string) (*entities.User, error) {
-	user, err := userService.userRepository.FindByEmail(email)
+func (UserService *UserService) AuthenticateUser(email, password string) (*entities.User, error) {
+	user, err := UserService.userRepository.FindByEmail(email)
 	if err != nil {
 		return nil, err
 	}

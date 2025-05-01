@@ -6,16 +6,16 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/henrygoeszanin/api_golang_estudos/application/dtos"
-	"github.com/henrygoeszanin/api_golang_estudos/application/interfaces/services"
+	"github.com/henrygoeszanin/api_golang_estudos/application/services"
 )
 
 // BookHandler manipula as requisições relacionadas a livros
 type BookHandler struct {
-	bookService services.BookService
+	bookService *services.BookService
 }
 
 // NewBookHandler cria uma nova instância de BookHandler
-func NewBookHandler(bookService services.BookService) *BookHandler {
+func NewBookHandler(bookService *services.BookService) *BookHandler {
 	return &BookHandler{
 		bookService: bookService,
 	}

@@ -9,16 +9,16 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/henrygoeszanin/api_golang_estudos/application/dtos"
-	"github.com/henrygoeszanin/api_golang_estudos/application/interfaces/services"
+	"github.com/henrygoeszanin/api_golang_estudos/application/services"
 )
 
 // UserHandler manipula as requisições relacionadas a usuários
 type UserHandler struct {
-	userService services.UserService
+	userService *services.UserService
 }
 
 // NewUserHandler cria uma nova instância de UserHandler
-func NewUserHandler(userService services.UserService) *UserHandler {
+func NewUserHandler(userService *services.UserService) *UserHandler {
 	return &UserHandler{
 		userService: userService,
 	}

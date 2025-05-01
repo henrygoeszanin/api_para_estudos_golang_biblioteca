@@ -11,7 +11,7 @@ import (
 	jwttoken "github.com/golang-jwt/jwt/v4" // Adicione esta importação
 
 	"github.com/henrygoeszanin/api_golang_estudos/application/dtos"
-	"github.com/henrygoeszanin/api_golang_estudos/application/interfaces/services"
+	"github.com/henrygoeszanin/api_golang_estudos/application/services"
 	"github.com/henrygoeszanin/api_golang_estudos/config"
 )
 
@@ -74,7 +74,7 @@ type login struct {
 }
 
 // SetupJWTMiddleware configura o middleware JWT
-func SetupJWTMiddleware(userService services.UserService, cfg *config.Config) (*jwt.GinJWTMiddleware, error) {
+func SetupJWTMiddleware(userService *services.UserService, cfg *config.Config) (*jwt.GinJWTMiddleware, error) {
 	return jwt.New(&jwt.GinJWTMiddleware{
 		Realm:       "library-api",
 		Key:         []byte(cfg.JWTSecret),

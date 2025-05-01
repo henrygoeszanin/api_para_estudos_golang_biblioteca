@@ -6,28 +6,27 @@ import (
 
 	"github.com/henrygoeszanin/api_golang_estudos/application/dtos"
 	"github.com/henrygoeszanin/api_golang_estudos/application/interfaces/repositories"
-	"github.com/henrygoeszanin/api_golang_estudos/application/interfaces/services"
 	"github.com/henrygoeszanin/api_golang_estudos/domain/entities"
 )
 
-// loanService implementa a interface LoanService
-type loanService struct {
+// LoanService implementa a interface LoanService
+type LoanService struct {
 	loanRepository repositories.LoanRepository
 	bookRepository repositories.BookRepository
 }
 
 // NewLoanService cria uma nova instância do serviço de empréstimos
-func NewLoanService(loanRepository repositories.LoanRepository, bookRepository repositories.BookRepository) services.LoanService {
-	return &loanService{
+func NewLoanService(loanRepository repositories.LoanRepository, bookRepository repositories.BookRepository) *LoanService {
+	return &LoanService{
 		loanRepository: loanRepository,
 		bookRepository: bookRepository,
 	}
 }
 
 // Create cria um novo empréstimo
-func (loanService *loanService) Create(userID uint, loanDTO dtos.LoanCreateDTO) (*dtos.LoanResponseDTO, error) {
+func (LoanService *LoanService) Create(userID uint, loanDTO dtos.LoanCreateDTO) (*dtos.LoanResponseDTO, error) {
 	// Verificar se o livro existe
-	book, err := loanService.bookRepository.FindByID(loanDTO.BookID)
+	book, err := LoanService.bookRepository.FindByID(loanDTO.BookID)
 	if err != nil {
 		return nil, err
 	}
@@ -49,12 +48,12 @@ func (loanService *loanService) Create(userID uint, loanDTO dtos.LoanCreateDTO) 
 		IsReturned: false,
 	}
 
-	if err := loanService.loanRepository.Create(&loan); err != nil {
+	if err := LoanService.loanRepository.Create(&loan); err != nil {
 		return nil, err
 	}
 
 	// Carregar dados completos do empréstimo com livro e usuário
-	fullLoan, err := loanService.loanRepository.FindByID(loan.ID)
+	fullLoan, err := LoanService.loanRepository.FindByID(loan.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -64,8 +63,8 @@ func (loanService *loanService) Create(userID uint, loanDTO dtos.LoanCreateDTO) 
 }
 
 // GetByID busca um empréstimo pelo ID
-func (loanService *loanService) GetByID(id uint, userID uint) (*dtos.LoanResponseDTO, error) {
-	loan, err := loanService.loanRepository.FindByID(id)
+func (LoanService *LoanService) GetByID(id uint, userID uint) (*dtos.LoanResponseDTO, error) {
+	loan, err := LoanService.loanRepository.FindByID(id)
 	if err != nil {
 		return nil, err
 	}
@@ -83,8 +82,8 @@ func (loanService *loanService) GetByID(id uint, userID uint) (*dtos.LoanRespons
 }
 
 // ListByUser retorna todos os empréstimos de um usuário
-func (loanService *loanService) ListByUser(userID uint) ([]dtos.LoanResponseDTO, error) {
-	loans, err := loanService.loanRepository.FindByUserID(userID)
+func (LoanService *LoanService) ListByUser(userID uint) ([]dtos.LoanResponseDTO, error) {
+	loans, err := LoanService.loanRepository.FindByUserID(userID)
 	if err != nil {
 		return nil, err
 	}
@@ -98,9 +97,9 @@ func (loanService *loanService) ListByUser(userID uint) ([]dtos.LoanResponseDTO,
 }
 
 // ReturnLoan marca um empréstimo como devolvido
-func (loanService *loanService) ReturnLoan(id uint, userID uint) (*dtos.LoanResponseDTO, error) {
+func (LoanService *LoanService) ReturnLoan(id uint, userID uint) (*dtos.LoanResponseDTO, error) {
 	// Verificar se o empréstimo existe e pertence ao usuário
-	loan, err := loanService.loanRepository.FindByID(id)
+	loan, err := LoanService.loanRepository.FindByID(id)
 	if err != nil {
 		return nil, err
 	}
@@ -118,12 +117,12 @@ func (loanService *loanService) ReturnLoan(id uint, userID uint) (*dtos.LoanResp
 
 	// Processar devolução
 	returnDate := time.Now()
-	if err := loanService.loanRepository.ReturnLoan(id, returnDate); err != nil {
+	if err := LoanService.loanRepository.ReturnLoan(id, returnDate); err != nil {
 		return nil, err
 	}
 
 	// Obter empréstimo atualizado
-	updatedLoan, err := loanService.loanRepository.FindByID(id)
+	updatedLoan, err := LoanService.loanRepository.FindByID(id)
 	if err != nil {
 		return nil, err
 	}
