@@ -8,8 +8,8 @@ import (
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
-	jwttoken "github.com/golang-jwt/jwt/v4" // Adicione esta importação
 
+	// Adicione esta importação
 	"github.com/henrygoeszanin/api_golang_estudos/application/dtos"
 	"github.com/henrygoeszanin/api_golang_estudos/application/services"
 	"github.com/henrygoeszanin/api_golang_estudos/config"
@@ -78,8 +78,8 @@ func SetupJWTMiddleware(userService *services.UserService, cfg *config.Config) (
 	return jwt.New(&jwt.GinJWTMiddleware{
 		Realm:       "library-api",
 		Key:         []byte(cfg.JWTSecret),
-		Timeout:     time.Hour * 24,
-		MaxRefresh:  time.Hour * 24 * 7,
+		Timeout:     time.Hour * 24,     // 24 horas
+		MaxRefresh:  time.Hour * 24 * 7, // 7 dias para refresh
 		IdentityKey: "id",
 
 		// Configurações de cookies
@@ -128,7 +128,7 @@ func SetupJWTMiddleware(userService *services.UserService, cfg *config.Config) (
 		},
 
 		// Função para gerar o payload do token
-		PayloadFunc: func(data interface{}) jwttoken.MapClaims {
+		PayloadFunc: func(data interface{}) jwt.MapClaims {
 			fmt.Printf("PayloadFunc recebeu dados do tipo: %T\n", data)
 
 			// Tente converter para UserResponseDTO
@@ -136,7 +136,7 @@ func SetupJWTMiddleware(userService *services.UserService, cfg *config.Config) (
 				fmt.Printf("Convertido com sucesso para UserResponseDTO: ID=%d, Email=%s\n",
 					user.ID, user.Email)
 
-				return jwttoken.MapClaims{
+				return jwt.MapClaims{
 					"id":       user.ID,
 					"email":    user.Email,
 					"is_admin": user.IsAdmin,
@@ -150,7 +150,7 @@ func SetupJWTMiddleware(userService *services.UserService, cfg *config.Config) (
 			// Adicione detalhes sobre o objeto recebido para debug
 			fmt.Printf("Conteúdo do objeto recebido: %+v\n", data)
 
-			return jwttoken.MapClaims{}
+			return jwt.MapClaims{}
 		},
 
 		// Função para extrair a identidade do token

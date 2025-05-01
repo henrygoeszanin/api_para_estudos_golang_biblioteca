@@ -63,3 +63,6 @@ postgresql/
 # Arquivos temporários
 *.tmp
 *.bak
+
+# Diretorios do postgres
+/postgres/
