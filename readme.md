@@ -32,7 +32,7 @@ api_golang_estudos/
 ├── application/                # Camada de aplicação
 │   ├── services/               # Implementação da lógica de negócios
 │   ├── dtos/                   # Objetos de transferência de dados
-│   └── interfaces/             # Interfaces de serviços e repositórios
+│   └── interfaces/             # Interfaces de repositórios
 ├── config/                     # Configurações da aplicação
 ├── domain/                     # Camada de domínio
 │   ├── entities/               # Entidades do domínio
