@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	"time"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -35,6 +36,24 @@ func SetupDatabase(config *config.Config) (*gorm.DB, error) {
 	if err != nil {
 		return nil, fmt.Errorf("falha na migração do banco: %w", err)
 	}
+
+	// Configurar o pool de conexões
+	sqlDB, err := db.DB()
+	if err != nil {
+		return nil, fmt.Errorf("falha ao acessar conexão SQL: %w", err)
+	}
+
+	// Definir número máximo de conexões abertas
+	sqlDB.SetMaxOpenConns(25)
+
+	// Definir número máximo de conexões ociosas
+	sqlDB.SetMaxIdleConns(10)
+
+	// Definir tempo máximo de vida da conexão
+	sqlDB.SetConnMaxLifetime(time.Hour)
+
+	// Definir tempo máximo de ociosidade
+	sqlDB.SetConnMaxIdleTime(30 * time.Minute)
 
 	return db, nil
 }
