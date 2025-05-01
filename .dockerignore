@@ -1,0 +1,47 @@
+# Arquivos de build e binários
+*.exe
+*.out
+bin/
+/api_estudos_biblioteca
+/api_biblioteca
+
+# Arquivos de configuração local e segredos
+.env
+.env.*
+!.env.example
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Documentação e arquivos de desenvolvimento
+/docs
+*.md
+LICENSE
+/postgres
+
+# Logs e arquivos temporários
+*.log
+/tmp
+/temp
+
+# Arquivos de teste
+*_test.go
+/test
+/tests
+coverage.out
+coverage.html
+
+# Ferramentas de desenvolvimento
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Arquivos Docker (já estão no contexto)
+.dockerignore
+docker-compose*.yml
+
+# Cache e módulos Go (serão recriados durante o build)
+.cache/
