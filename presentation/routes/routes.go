@@ -1,6 +1,9 @@
 package routes
 
 import (
+	"net/http"
+	"time"
+
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -39,7 +42,7 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB, cfg *config.Config) {
 	api := router.Group("/api")
 
 	// Configurar grupos de rotas por domínio
-	setupHealthRoutes(api)
+	setupHealthRoutes(api, db)
 	setupAuthRoutes(api, userHandler, authMiddleware)
 	setupBookRoutes(api, bookHandler, authMiddleware)
 	setupLoanRoutes(api, loanHandler, authMiddleware)
@@ -47,10 +50,62 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB, cfg *config.Config) {
 }
 
 // setupHealthRoutes configura rotas de health check
-func setupHealthRoutes(router *gin.RouterGroup) {
-	router.GET("/health", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"status": "API funcionando corretamente",
+func setupHealthRoutes(router *gin.RouterGroup, db *gorm.DB) {
+	router.GET("/health", func(context *gin.Context) {
+		// Verificação do banco de dados
+		sqlDB, err := db.DB()
+
+		// Informações do banco
+		dbInfo := gin.H{
+			"status": "desconectado",
+		}
+
+		if err != nil {
+			dbInfo["error"] = err.Error()
+		} else {
+			// Testar conexão com ping
+			pingErr := sqlDB.Ping()
+
+			// Coletar estatísticas
+			stats := sqlDB.Stats()
+
+			dbInfo = gin.H{
+				"status": func() string {
+					if pingErr == nil {
+						return "conectado"
+					} else {
+						return "erro"
+					}
+				}(),
+				"conexoes_abertas":  stats.OpenConnections,
+				"conexoes_em_uso":   stats.InUse,
+				"conexoes_idle":     stats.Idle,
+				"tempo_espera_max":  stats.MaxIdleClosed,
+				"tempo_espera":      stats.WaitDuration.String(),
+				"conexoes_max_vida": stats.MaxLifetimeClosed,
+			}
+
+			if pingErr != nil {
+				dbInfo["erro_ping"] = pingErr.Error()
+			}
+
+			// Consultar versão do banco (opcional)
+			var version string
+			row := db.Raw("SELECT version()").Row()
+			if row.Scan(&version) == nil {
+				dbInfo["version"] = version
+			}
+		}
+
+		// Informações da aplicação
+		appInfo := gin.H{
+			"status":    "operacional",
+			"timestamp": time.Now().Format(time.RFC3339),
+		}
+
+		context.JSON(http.StatusOK, gin.H{
+			"aplicacao":   appInfo,
+			"banco_dados": dbInfo,
 		})
 	})
 }
